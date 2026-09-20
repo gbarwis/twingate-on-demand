@@ -1,6 +1,7 @@
 # One-time setup for twingate-on-demand. Safe to run again.
 #
-#   1. Sets the Twingate service to Manual and stops it.       (needs admin)
+#   1. Closes the Twingate client if it is running, sets the
+#      service to Manual and stops it.                         (needs admin)
 #   2. Disables the machine-wide Twingate startup entry.       (needs admin)
 #   3. Creates a "Start Twingate" Start Menu shortcut, and with -Desktop
 #      a Desktop shortcut too.                                 (your own profile)
@@ -37,6 +38,9 @@ function New-LauncherShortcut([string]$Path) {
 }
 
 function Set-AdminSteps {
+    # Close the client first so it doesn't sit there retrying against a stopped service.
+    Stop-Process -Name "Twingate" -Force -ErrorAction SilentlyContinue
+
     Set-Service -Name $twingateClientService -StartupType Manual
     $service = Get-Service -Name $twingateClientService
     if ($service.Status -ne "Stopped") {
