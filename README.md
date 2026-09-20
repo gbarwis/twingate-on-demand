@@ -1,6 +1,6 @@
 # twingate-on-demand
 
-Keeps the Twingate Windows client installed but off after boot until you start it. This project is not affiliated with Twingate, and although it only uses standard Windows mechanisms (the service start type and Windows' startup approval), Twingate documents the service as `Automatic`, so the setup is unsupported (see [Caveats](#caveats)).
+Keeps the Twingate Windows client installed but off after boot until you start it. This project is not affiliated with Twingate, and although it only uses standard Windows mechanisms (the service start type and Windows' startup approval), Twingate's [troubleshooting article](https://help.twingate.com/articles/2020664128-windows-client-system-service-is-not-running) for a stopped service tells you to set the service's startup type to `Automatic`, so treat this setup as unsupported (see [Caveats](#caveats)).
 
 This README has three parts:
 
@@ -13,7 +13,7 @@ This README has three parts:
 Two things bring Twingate up at boot; turning off only one of them is not enough.
 
 1. **The tray app.** The installer adds `Twingate.lnk` (`Twingate.exe --startup`) to the all-users Startup folder.
-2. **The service.** `Twingate.Service` is `Automatic`. With no saved session it does nothing, but after you have signed in it restores the session at boot, with no tray app, and routes your LAN through the tunnel.
+2. **The service.** `Twingate.Service` is `Automatic`. With no saved session it does nothing, but after you have signed in it restores the session at boot, with no tray app, and starts routing traffic for your Twingate resources through the tunnel, which can interfere with local devices when those resources overlap your local network.
 
 ## Setup (do this once)
 
@@ -105,3 +105,7 @@ Remove-ItemProperty 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Explorer\St
 - **Updates can undo this.** An update may reset the service to `Automatic`, re-enable the startup entry and launch Twingate immediately during the update, and client 2026.239 fixed ["the client application not launching automatically after installation or update"](https://www.twingate.com/changelog/clients). After an update, run the setup script again (or manual steps 1 and 2) and stop Twingate if it started.
 - Starting the service needs elevation, so every start shows a UAC prompt, and a standard-user account must also enter admin credentials.
 - Tested on Windows 11 with client 2026.239.5147.
+
+## License
+
+[MIT](LICENSE).
